@@ -3,261 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>April 2026 — Lead Dashboard</title>
+<title>April 2026 — MHC Lead Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0e0f11;
-    --surface: #161719;
-    --surface2: #1e2024;
-    --border: rgba(255,255,255,0.07);
-    --text: #f0f0ee;
-    --muted: #6b6e75;
-    --accent: #c8f55a;
-    --accent2: #5af5c0;
-    --accent3: #f55a8c;
-    --accent4: #f5a55a;
-    --font-head: 'Syne', sans-serif;
-    --font-mono: 'DM Mono', monospace;
+    --bg: #f2f2f2;
+    --surface: #ffffff;
+    --surface2: #ebebeb;
+    --border: rgba(0,0,0,0.09);
+    --text: #111111;
+    --muted: #888888;
+    --red: #e8001c;
+    --red-light: rgba(232,0,28,0.07);
+    --font: 'Nunito Sans', sans-serif;
   }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-mono);
-    min-height: 100vh;
-    padding: 2rem;
-  }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; padding: 2rem; }
 
   header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 3px solid var(--red);
   }
 
-  .logo {
-    font-family: var(--font-head);
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1;
-  }
+  .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; color: var(--text); }
+  .logo span { color: var(--red); }
+  .header-period { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; text-align: right; }
+  .header-date { font-size: 1rem; font-weight: 800; color: var(--text); text-align: right; }
 
-  .logo span { color: var(--accent); }
-
-  .subtitle {
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
 
   .kpi {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem 1.5rem;
-    position: relative;
-    overflow: hidden;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.2rem 1.4rem; border-left: 4px solid var(--red);
   }
 
-  .kpi::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent-color, var(--accent));
-  }
+  .kpi-label { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; margin-bottom: 0.35rem; }
+  .kpi-value { font-size: 2.2rem; font-weight: 900; line-height: 1; letter-spacing: -0.03em; color: var(--text); }
+  .kpi-sub { font-size: 0.68rem; color: var(--muted); margin-top: 0.35rem; font-weight: 600; }
 
-  .kpi-label {
-    font-size: 0.65rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .chart-wide { grid-column: 1 / -1; }
 
-  .kpi-value {
-    font-family: var(--font-head);
-    font-size: 2.2rem;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.03em;
-  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem; margin-bottom: 1rem; }
+  .card:last-child { margin-bottom: 0; }
 
-  .kpi-sub {
-    font-size: 0.65rem;
-    color: var(--muted);
-    margin-top: 0.4rem;
-  }
+  .card-title { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; margin-bottom: 0.35rem; }
+  .card-sub { font-size: 0.7rem; color: var(--muted); margin-bottom: 1.1rem; font-weight: 600; }
+  .chart-wrap { position: relative; }
 
-  .charts-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
+  .legend { display: flex; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.68rem; color: var(--muted); font-weight: 700; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .legend-dash { width: 18px; height: 0; border-top: 2px dashed #e8001c; flex-shrink: 0; }
 
-  .chart-wide {
-    grid-column: 1 / -1;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-  }
-
-  .card-title {
-    font-size: 0.65rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-  }
-
-  .chart-wrap {
-    position: relative;
-  }
-
-  /* Table */
-  .table-wrap {
-    overflow-x: auto;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.78rem;
-  }
-
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
   thead th {
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-align: left;
-    padding: 0 0.75rem 0.75rem;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
+    font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); font-weight: 800; text-align: left;
+    padding: 0 0.75rem 0.75rem; border-bottom: 2px solid var(--border); white-space: nowrap;
   }
-
   thead th:not(:first-child) { text-align: right; }
-
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
   tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--surface2); }
-
-  tbody td {
-    padding: 0.65rem 0.75rem;
-    color: var(--text);
-  }
-
+  tbody tr:hover { background: var(--red-light); }
+  tbody td { padding: 0.6rem 0.75rem; color: var(--text); font-weight: 600; }
   tbody td:not(:first-child) { text-align: right; }
 
-  .pill {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 0.65rem;
-    font-weight: 500;
-  }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; font-weight: 800; }
+  .pill-green { background: #e6f4ea; color: #1e7e34; }
+  .pill-amber { background: #fff3cd; color: #856404; }
+  .pill-red   { background: var(--red-light); color: var(--red); }
 
-  .pill-green { background: rgba(200,245,90,0.15); color: var(--accent); }
-  .pill-amber { background: rgba(245,165,90,0.15); color: var(--accent4); }
-  .pill-red   { background: rgba(245,90,140,0.15); color: var(--accent3); }
-
-  .bar-inline {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
-  }
-
-  .bar-track {
-    width: 60px;
-    height: 4px;
-    background: var(--surface2);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    background: var(--accent);
-  }
-
-  /* Legend */
-  .legend {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.65rem;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
-
-  .legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-
-  /* Tabs */
-  .tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .tab {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .tab:hover { border-color: var(--accent); color: var(--accent); }
-  .tab.active { background: var(--accent); border-color: var(--accent); color: #000; }
+  .bar-inline { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+  .bar-track { width: 60px; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; background: var(--red); }
 
   @media (max-width: 900px) {
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .charts-grid { grid-template-columns: 1fr; }
-    .chart-wide { grid-column: 1; }
     body { padding: 1rem; }
   }
 </style>
@@ -265,132 +92,105 @@
 <body>
 
 <!-- Password gate -->
-<div id="gate" style="position:fixed;inset:0;background:#0e0f11;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:1.5rem;">
-  <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-0.03em;">Lead<span style="color:#c8f55a">Board</span></div>
-  <div style="font-size:0.65rem;color:#6b6e75;letter-spacing:0.12em;text-transform:uppercase;margin-top:-1rem;">April 2026 · Hungary</div>
-  <div style="background:#161719;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:2rem 2.5rem;display:flex;flex-direction:column;gap:1rem;min-width:300px;">
-    <label style="font-family:'DM Mono',monospace;font-size:0.65rem;color:#6b6e75;letter-spacing:0.1em;text-transform:uppercase;">Password</label>
+<div id="gate" style="position:fixed;inset:0;background:#f2f2f2;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:1.5rem;">
+  <div style="font-family:'Nunito Sans',sans-serif;font-size:2rem;font-weight:900;letter-spacing:-0.02em;color:#111;">MHC <span style="color:#e8001c">LeadBoard</span></div>
+  <div style="font-size:0.65rem;color:#888;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;margin-top:-1rem;">April 2026 · Hungary</div>
+  <div style="background:#fff;border:1px solid rgba(0,0,0,0.09);border-radius:12px;padding:2rem 2.5rem;display:flex;flex-direction:column;gap:1rem;min-width:300px;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+    <label style="font-size:0.65rem;color:#888;letter-spacing:0.1em;text-transform:uppercase;font-weight:800;">Password</label>
     <input id="pwInput" type="password" placeholder="••••••••••••"
-      style="background:#1e2024;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:10px 14px;color:#f0f0ee;font-family:'DM Mono',monospace;font-size:0.9rem;outline:none;transition:border 0.15s;"
+      style="background:#f2f2f2;border:1px solid rgba(0,0,0,0.12);border-radius:8px;padding:10px 14px;color:#111;font-family:'Nunito Sans',sans-serif;font-size:0.9rem;font-weight:700;outline:none;transition:border 0.15s;"
       onkeydown="if(event.key==='Enter')checkPw()"
-      onfocus="this.style.borderColor='#c8f55a'"
-      onblur="this.style.borderColor='rgba(255,255,255,0.07)'"
+      onfocus="this.style.borderColor='#e8001c'"
+      onblur="this.style.borderColor='rgba(0,0,0,0.12)'"
     />
     <button onclick="checkPw()"
-      style="background:#c8f55a;border:none;border-radius:8px;padding:10px;color:#0e0f11;font-family:'DM Mono',monospace;font-size:0.75rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:opacity 0.15s;"
-      onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-      Enter
-    </button>
-    <div id="pwError" style="font-family:'DM Mono',monospace;font-size:0.7rem;color:#f55a8c;text-align:center;display:none;">Incorrect password</div>
+      style="background:#e8001c;border:none;border-radius:8px;padding:10px;color:#fff;font-family:'Nunito Sans',sans-serif;font-size:0.8rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:opacity 0.15s;"
+      onmouseover="this.style.opacity='0.82'" onmouseout="this.style.opacity='1'">Enter</button>
+    <div id="pwError" style="font-size:0.7rem;color:#e8001c;font-weight:700;text-align:center;display:none;">Incorrect password</div>
   </div>
 </div>
 
 <script>
 function checkPw() {
-  const val = document.getElementById('pwInput').value;
-  if (val === 'marketingastro') {
+  if (document.getElementById('pwInput').value === 'marketingastro') {
     document.getElementById('gate').style.display = 'none';
   } else {
-    const err = document.getElementById('pwError');
-    err.style.display = 'block';
+    const e = document.getElementById('pwError');
+    e.style.display = 'block';
     document.getElementById('pwInput').value = '';
-    setTimeout(() => err.style.display = 'none', 2000);
+    setTimeout(() => e.style.display = 'none', 2000);
   }
 }
 </script>
 
 <header>
+  <div class="logo">MHC <span>LeadBoard</span></div>
   <div>
-    <div class="logo">Lead<span>Board</span></div>
-    <div class="subtitle" style="margin-top:6px;">April 2026 · Hungary</div>
-  </div>
-  <div style="text-align:right">
-    <div style="font-size:0.65rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">Period</div>
-    <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:700;">01 – 30 Apr 2026</div>
+    <div class="header-period">Period</div>
+    <div class="header-date">01 – 30 Apr 2026</div>
   </div>
 </header>
 
-<!-- KPIs -->
 <div class="kpi-grid">
-  <div class="kpi" style="--accent-color: var(--accent)">
-    <div class="kpi-label">Total leads</div>
-    <div class="kpi-value">198</div>
-    <div class="kpi-sub">across 30 active days</div>
+  <div class="kpi"><div class="kpi-label">Total leads</div><div class="kpi-value">198</div><div class="kpi-sub">30 active days</div></div>
+  <div class="kpi"><div class="kpi-label">Avg company score</div><div class="kpi-value">3.63</div><div class="kpi-sub">0 = largest · 5 = smallest</div></div>
+  <div class="kpi"><div class="kpi-label">Kuka rate</div><div class="kpi-value" style="color:var(--red)">55%</div><div class="kpi-sub">109 of 198 leads</div></div>
+  <div class="kpi"><div class="kpi-label">Campaigns active</div><div class="kpi-value">20</div><div class="kpi-sub">META + WWW combined</div></div>
+</div>
+
+<div class="card">
+  <div class="card-title">Daily lead volume — April</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(232,0,28,0.45)"></div>Total leads</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#333"></div>Kuka leads</div>
+    <div class="legend-item"><div class="legend-dash"></div>Campaign launch</div>
   </div>
-  <div class="kpi" style="--accent-color: var(--accent2)">
-    <div class="kpi-label">Avg company score</div>
-    <div class="kpi-value">3.63</div>
-    <div class="kpi-sub">0 = largest · 5 = smallest</div>
-  </div>
-  <div class="kpi" style="--accent-color: var(--accent3)">
-    <div class="kpi-label">Kuka rate</div>
-    <div class="kpi-value">55%</div>
-    <div class="kpi-sub">109 of 198 leads</div>
-  </div>
-  <div class="kpi" style="--accent-color: var(--accent4)">
-    <div class="kpi-label">Campaigns active</div>
-    <div class="kpi-value">20</div>
-    <div class="kpi-sub">META + WWW combined</div>
+  <div class="chart-wrap" style="height:210px">
+    <canvas id="timelineChart" role="img" aria-label="Daily lead volume April 2026">Daily leads April 1–30.</canvas>
   </div>
 </div>
 
-<!-- Charts row 1 -->
-<div class="charts-grid">
-
-  <!-- Daily volume timeline -->
-  <div class="card chart-wide">
-    <div class="card-title">Daily lead volume — April</div>
-    <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Total leads</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div>Kuka leads</div>
-    </div>
-    <div class="chart-wrap" style="height:200px">
-      <canvas id="timelineChart" role="img" aria-label="Daily lead volume April 2026">Daily leads from April 1 to April 30.</canvas>
-    </div>
+<div class="card">
+  <div class="card-title">Daily kuka % — April</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red);border-radius:50%"></div>Kuka %</div>
+    <div class="legend-item"><div class="legend-dash"></div>Campaign launch</div>
   </div>
+  <div class="chart-wrap" style="height:150px">
+    <canvas id="kukaLineChart" role="img" aria-label="Daily kuka percentage April 2026">Daily kuka % April 1–30.</canvas>
+  </div>
+</div>
 
-  <!-- Leads by campaign bar -->
-  <div class="card">
+<div class="charts-grid">
+  <div class="card" style="margin-bottom:0">
     <div class="card-title">Leads by campaign</div>
-    <div class="chart-wrap" style="height:380px">
+    <div class="chart-wrap" style="height:400px">
       <canvas id="campaignBar" role="img" aria-label="Lead count by campaign">Campaign lead counts.</canvas>
     </div>
   </div>
-
-  <!-- Kuka % by campaign -->
-  <div class="card">
+  <div class="card" style="margin-bottom:0">
     <div class="card-title">Kuka % by campaign</div>
-    <div class="chart-wrap" style="height:380px">
-      <canvas id="kukaBar" role="img" aria-label="Kuka percentage by campaign">Kuka rates per campaign.</canvas>
+    <div class="chart-wrap" style="height:400px">
+      <canvas id="kukaBar" role="img" aria-label="Kuka % by campaign">Kuka rates per campaign.</canvas>
     </div>
   </div>
-
-  <!-- Avg score scatter -->
-  <div class="card chart-wide">
-    <div class="card-title">Campaign quality map — avg score vs kuka %</div>
-    <div style="font-size:0.65rem;color:var(--muted);margin-bottom:1rem;">Lower score = larger companies. Lower kuka % = better lead quality. Best campaigns: bottom-left.</div>
-    <div class="chart-wrap" style="height:320px">
-      <canvas id="scatterChart" role="img" aria-label="Scatter chart of avg score vs kuka percentage">Quality map of campaigns.</canvas>
-    </div>
-  </div>
-
 </div>
 
-<!-- Table -->
+<div style="margin-bottom:1rem"></div>
+
+<div class="card">
+  <div class="card-title">Campaign quality map — avg score vs kuka %</div>
+  <div class="card-sub">Lower score = larger companies · Lower kuka % = better quality · Best campaigns: bottom-left</div>
+  <div class="chart-wrap" style="height:320px">
+    <canvas id="scatterChart" role="img" aria-label="Avg score vs kuka %">Quality map.</canvas>
+  </div>
+</div>
+
 <div class="card">
   <div class="card-title">Campaign breakdown</div>
   <div class="table-wrap">
-    <table id="campaignTable">
-      <thead>
-        <tr>
-          <th>Campaign</th>
-          <th>Total</th>
-          <th>Avg score</th>
-          <th>Kuka</th>
-          <th>Kuka %</th>
-          <th>Volume</th>
-        </tr>
-      </thead>
+    <table>
+      <thead><tr><th>Campaign</th><th>Total</th><th>Avg score</th><th>Kuka</th><th>Kuka %</th><th>Volume</th></tr></thead>
       <tbody id="tableBody"></tbody>
     </table>
   </div>
@@ -398,26 +198,26 @@ function checkPw() {
 
 <script>
 const CAMPAIGNS = [
-  {k:'BMW iX3',            t:49, avg:3.27, ku:16},
-  {k:'Renault Master',     t:28, avg:3.43, ku:14},
-  {k:'Toyota Proace Max',  t:21, avg:3.67, ku:9},
-  {k:'KIA K4',             t:17, avg:3.80, ku:7},
-  {k:'CHERY Tiggo 8',      t:16, avg:4.20, ku:11},
-  {k:'Új autók galéria',   t:15, avg:4.43, ku:8},
-  {k:'(no campaign)',      t:9,  avg:2.75, ku:5},
-  {k:'Toyota Yaris Cross', t:7,  avg:5.00, ku:5},
-  {k:'TESLA Model 3',      t:6,  avg:3.33, ku:3},
-  {k:'Toyota Corolla Cross',t:5, avg:4.50, ku:2},
-  {k:'Tesla Model Y',      t:3,  avg:4.00, ku:2},
-  {k:'VW Passat',          t:3,  avg:4.00, ku:2},
-  {k:'Toyota Camry',       t:3,  avg:3.00, ku:1},
-  {k:'Omoda 9',            t:3,  avg:3.00, ku:1},
-  {k:'BYD Sealion 7',      t:3,  avg:4.00, ku:2},
-  {k:'Mercedes-Benz CLA',  t:2,  avg:null, ku:2},
-  {k:'Omoda 5',            t:2,  avg:null, ku:2},
-  {k:'Teherflotta LP',     t:1,  avg:0.00, ku:0},
-  {k:'Hűtős teherflotta LP',t:1, avg:2.00, ku:0},
-  {k:'eBringa flotta LP',  t:1,  avg:4.00, ku:0},
+  {k:'BMW iX3',              t:49, avg:3.27, ku:16},
+  {k:'Renault Master',       t:28, avg:3.43, ku:14},
+  {k:'Toyota Proace Max',    t:21, avg:3.67, ku:9},
+  {k:'KIA K4',               t:17, avg:3.80, ku:7},
+  {k:'CHERY Tiggo 8',        t:16, avg:4.20, ku:11},
+  {k:'Új autók galéria',     t:15, avg:4.43, ku:8},
+  {k:'(no campaign)',        t:9,  avg:2.75, ku:5},
+  {k:'Toyota Yaris Cross',   t:7,  avg:5.00, ku:5},
+  {k:'TESLA Model 3',        t:6,  avg:3.33, ku:3},
+  {k:'Toyota Corolla Cross', t:5,  avg:4.50, ku:2},
+  {k:'Tesla Model Y',        t:3,  avg:4.00, ku:2},
+  {k:'VW Passat',            t:3,  avg:4.00, ku:2},
+  {k:'Toyota Camry',         t:3,  avg:3.00, ku:1},
+  {k:'Omoda 9',              t:3,  avg:3.00, ku:1},
+  {k:'BYD Sealion 7',        t:3,  avg:4.00, ku:2},
+  {k:'Mercedes-Benz CLA',    t:2,  avg:null, ku:2},
+  {k:'Omoda 5',              t:2,  avg:null, ku:2},
+  {k:'Teherflotta LP',       t:1,  avg:0.00, ku:0},
+  {k:'Hűtős teherflotta LP', t:1,  avg:2.00, ku:0},
+  {k:'eBringa flotta LP',    t:1,  avg:4.00, ku:0},
 ];
 
 const DAILY = [
@@ -433,187 +233,169 @@ const DAILY = [
   {d:'Apr 28',t:10,ku:5},{d:'Apr 29',t:11,ku:5},{d:'Apr 30',t:3,ku:2},
 ];
 
-const C = {
-  accent:  '#c8f55a',
-  accent2: '#5af5c0',
-  accent3: '#f55a8c',
-  accent4: '#f5a55a',
-  muted:   '#6b6e75',
-  surface2:'#1e2024',
-  text:    '#f0f0ee',
-  grid:    'rgba(255,255,255,0.05)',
-};
+// Campaign launch wave indices (0-based April day index)
+// Wave 1: 20260213 — Feb 13, running from day 0
+// Wave 2: 20260309 — Mar 9, running from day 0
+// Wave 3: 20260417 — Apr 17 = index 16
+const LAUNCHES = [
+  { idx: 0,  label: 'Wave 1+2\n(Feb & Mar)' },
+  { idx: 16, label: 'Wave 3\n(Apr 17)' },
+];
 
-Chart.defaults.color = C.muted;
-Chart.defaults.font.family = "'DM Mono', monospace";
+const RED   = '#e8001c';
+const DARK  = '#333333';
+const GRID  = 'rgba(0,0,0,0.06)';
+const MUTED = '#aaaaaa';
+
+Chart.defaults.color = '#888';
+Chart.defaults.font.family = "'Nunito Sans', sans-serif";
 Chart.defaults.font.size = 11;
+Chart.defaults.font.weight = '600';
 
-// ---- Timeline ----
+// Shared launch-line plugin factory
+function makeLaunchPlugin(id, showLabel) {
+  return {
+    id,
+    afterDraw(chart) {
+      const ctx = chart.ctx;
+      const xAxis = chart.scales.x;
+      const yAxis = chart.scales.y;
+      if (!xAxis || !yAxis) return;
+      LAUNCHES.forEach(({ idx, label }) => {
+        const x = xAxis.getPixelForValue(idx);
+        ctx.save();
+        ctx.strokeStyle = RED;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(x, yAxis.top);
+        ctx.lineTo(x, yAxis.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        if (showLabel) {
+          ctx.fillStyle = RED;
+          ctx.font = '700 9px "Nunito Sans"';
+          ctx.textAlign = 'left';
+          label.split('\n').forEach((line, i) => {
+            ctx.fillText(line, x + 4, yAxis.top + 12 + i * 11);
+          });
+        }
+        ctx.restore();
+      });
+    }
+  };
+}
+
+// ---- Daily volume bar ----
 new Chart(document.getElementById('timelineChart'), {
   type: 'bar',
+  plugins: [makeLaunchPlugin('launchVol', true)],
   data: {
-    labels: DAILY.map(d=>d.d),
+    labels: DAILY.map((_, i) => i),
     datasets: [
-      {
-        label: 'Total',
-        data: DAILY.map(d=>d.t),
-        backgroundColor: C.accent + '33',
-        borderColor: C.accent,
-        borderWidth: 1,
-        borderRadius: 3,
-      },
-      {
-        label: 'Kuka',
-        data: DAILY.map(d=>d.ku),
-        backgroundColor: C.accent3 + '55',
-        borderColor: C.accent3,
-        borderWidth: 1,
-        borderRadius: 3,
-      }
+      { label:'Total', data: DAILY.map(d=>d.t), backgroundColor:'rgba(232,0,28,0.18)', borderColor:RED, borderWidth:1.5, borderRadius:3 },
+      { label:'Kuka',  data: DAILY.map(d=>d.ku), backgroundColor:'rgba(51,51,51,0.45)', borderColor:DARK, borderWidth:1, borderRadius:3 },
     ]
   },
   options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { color: C.grid }, ticks: { maxRotation: 45, autoSkip: false, font: { size: 9 } } },
-      y: { grid: { color: C.grid }, beginAtZero: true, ticks: { stepSize: 2 } }
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{
+      x:{ grid:{color:GRID}, ticks:{ maxRotation:45, autoSkip:false, font:{size:9}, callback:(v)=>DAILY[v]?.d??'' } },
+      y:{ grid:{color:GRID}, beginAtZero:true, ticks:{stepSize:2} }
     }
   }
 });
 
-// ---- Campaign bar ----
-const sorted = [...CAMPAIGNS].sort((a,b)=>b.t-a.t);
-new Chart(document.getElementById('campaignBar'), {
-  type: 'bar',
+// ---- Daily kuka % line ----
+new Chart(document.getElementById('kukaLineChart'), {
+  type: 'line',
+  plugins: [makeLaunchPlugin('launchKuka', false)],
   data: {
-    labels: sorted.map(c=>c.k),
+    labels: DAILY.map((_, i) => i),
     datasets: [{
-      label: 'Total leads',
-      data: sorted.map(c=>c.t),
-      backgroundColor: sorted.map(c => {
-        const kp = c.ku/c.t;
-        return kp >= 0.7 ? C.accent3+'99' : kp >= 0.45 ? C.accent4+'99' : C.accent+'99';
+      label: 'Kuka %',
+      data: DAILY.map(d => Math.round(d.ku / d.t * 100)),
+      borderColor: RED,
+      borderWidth: 2,
+      pointBackgroundColor: DAILY.map(d => {
+        const p = d.ku / d.t;
+        return p >= 0.7 ? RED : p >= 0.45 ? '#c05000' : '#1e7e34';
       }),
-      borderColor: sorted.map(c => {
-        const kp = c.ku/c.t;
-        return kp >= 0.7 ? C.accent3 : kp >= 0.45 ? C.accent4 : C.accent;
-      }),
-      borderWidth: 1,
-      borderRadius: 3,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      fill: true,
+      backgroundColor: 'rgba(232,0,28,0.06)',
+      tension: 0.35,
     }]
   },
   options: {
-    indexAxis: 'y',
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { color: C.grid }, beginAtZero: true },
-      y: { grid: { color: 'transparent' }, ticks: { font: { size: 10 } } }
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false },
+      tooltip:{ callbacks:{ label: ctx => ` ${ctx.raw}% kuka` } }
+    },
+    scales:{
+      x:{ grid:{color:GRID}, ticks:{ maxRotation:45, autoSkip:false, font:{size:9}, callback:(v)=>DAILY[v]?.d??'' } },
+      y:{ grid:{color:GRID}, beginAtZero:true, max:110, ticks:{ callback:v=>v+'%', stepSize:25 } }
     }
   }
+});
+
+// Color helpers
+const barBg = c => { const p=c.ku/c.t; return p>=0.7?'rgba(232,0,28,0.72)':p>=0.45?'rgba(232,0,28,0.35)':'rgba(232,0,28,0.15)'; };
+const barBd = c => { const p=c.ku/c.t; return p>=0.7?RED:p>=0.45?'#c05000':'#aaa'; };
+
+// ---- Campaign bar ----
+const sorted = [...CAMPAIGNS].sort((a,b)=>b.t-a.t);
+new Chart(document.getElementById('campaignBar'), {
+  type:'bar',
+  data:{ labels:sorted.map(c=>c.k), datasets:[{ data:sorted.map(c=>c.t), backgroundColor:sorted.map(barBg), borderColor:sorted.map(barBd), borderWidth:1, borderRadius:3 }] },
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    scales:{ x:{grid:{color:GRID},beginAtZero:true}, y:{grid:{color:'transparent'},ticks:{font:{size:10}}} } }
 });
 
 // ---- Kuka % bar ----
 const sortedKuka = [...CAMPAIGNS].sort((a,b)=>(b.ku/b.t)-(a.ku/a.t));
 new Chart(document.getElementById('kukaBar'), {
-  type: 'bar',
-  data: {
-    labels: sortedKuka.map(c=>c.k),
-    datasets: [{
-      label: 'Kuka %',
-      data: sortedKuka.map(c=>Math.round(c.ku/c.t*100)),
-      backgroundColor: sortedKuka.map(c => {
-        const kp = c.ku/c.t;
-        return kp >= 0.7 ? C.accent3+'99' : kp >= 0.45 ? C.accent4+'99' : C.accent+'99';
-      }),
-      borderColor: sortedKuka.map(c => {
-        const kp = c.ku/c.t;
-        return kp >= 0.7 ? C.accent3 : kp >= 0.45 ? C.accent4 : C.accent;
-      }),
-      borderWidth: 1,
-      borderRadius: 3,
-    }]
-  },
-  options: {
-    indexAxis: 'y',
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { color: C.grid }, beginAtZero: true, max: 100, ticks: { callback: v=>v+'%' } },
-      y: { grid: { color: 'transparent' }, ticks: { font: { size: 10 } } }
-    }
-  }
+  type:'bar',
+  data:{ labels:sortedKuka.map(c=>c.k), datasets:[{ data:sortedKuka.map(c=>Math.round(c.ku/c.t*100)), backgroundColor:sortedKuka.map(barBg), borderColor:sortedKuka.map(barBd), borderWidth:1, borderRadius:3 }] },
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    scales:{ x:{grid:{color:GRID},beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}, y:{grid:{color:'transparent'},ticks:{font:{size:10}}} } }
 });
 
-// ---- Scatter quality map ----
+// ---- Scatter ----
 const scatterData = CAMPAIGNS.filter(c=>c.avg!==null).map(c=>({
-  x: c.avg,
-  y: Math.round(c.ku/c.t*100),
-  r: Math.max(6, c.t * 1.5),
-  label: c.k,
-  t: c.t,
+  x:c.avg, y:Math.round(c.ku/c.t*100), r:Math.max(7,c.t*1.4), label:c.k, t:c.t
 }));
 
 const scatterChart = new Chart(document.getElementById('scatterChart'), {
-  type: 'bubble',
-  data: {
-    datasets: [{
-      label: 'Campaigns',
-      data: scatterData,
-      backgroundColor: scatterData.map(d => {
-        if (d.x <= 3.5 && d.y <= 40) return C.accent + 'cc';
-        if (d.x >= 4.2 || d.y >= 65) return C.accent3 + 'cc';
-        return C.accent4 + 'cc';
-      }),
-      borderColor: 'transparent',
-    }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    layout: { padding: 20 },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: ctx => {
-            const d = ctx.raw;
-            return ` ${d.label} — score: ${d.x.toFixed(2)}, kuka: ${d.y}%, leads: ${d.t}`;
-          }
-        }
-      }
-    },
-    scales: {
-      x: {
-        grid: { color: C.grid },
-        min: 0, max: 5.5,
-        title: { display: true, text: 'avg score (0=largest co.)', color: C.muted, font: { size: 10 } },
-        ticks: { stepSize: 0.5 }
-      },
-      y: {
-        grid: { color: C.grid },
-        min: -5, max: 105,
-        title: { display: true, text: 'kuka %', color: C.muted, font: { size: 10 } },
-        ticks: { callback: v=>v+'%' }
-      }
+  type:'bubble',
+  data:{ datasets:[{
+    data:scatterData,
+    backgroundColor: scatterData.map(d => d.x<=3.5&&d.y<=40?'rgba(30,126,52,0.55)':d.x>=4.2||d.y>=65?'rgba(232,0,28,0.6)':'rgba(180,100,0,0.45)'),
+    borderColor:'transparent',
+  }]},
+  options:{
+    responsive:true, maintainAspectRatio:false, layout:{padding:24},
+    plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:ctx=>` ${ctx.raw.label} — score:${ctx.raw.x.toFixed(2)}, kuka:${ctx.raw.y}%, leads:${ctx.raw.t}` } } },
+    scales:{
+      x:{ grid:{color:GRID}, min:0, max:5.5, title:{display:true,text:'avg score (0 = largest company)',color:MUTED,font:{size:10}}, ticks:{stepSize:0.5} },
+      y:{ grid:{color:GRID}, min:-5, max:110, title:{display:true,text:'kuka %',color:MUTED,font:{size:10}}, ticks:{callback:v=>v+'%'} }
     }
   }
 });
 
-// Labels on bubbles
-const originalDraw = scatterChart.draw.bind(scatterChart);
+const origDraw = scatterChart.draw.bind(scatterChart);
 scatterChart.draw = function() {
-  originalDraw();
+  origDraw();
   const ctx = scatterChart.ctx;
-  scatterChart.data.datasets[0].data.forEach((d, i) => {
+  scatterChart.data.datasets[0].data.forEach((d,i) => {
     const meta = scatterChart.getDatasetMeta(0);
     if (!meta.data[i]) return;
-    const {x, y} = meta.data[i].getCenterPoint();
+    const {x,y} = meta.data[i].getCenterPoint();
     ctx.save();
-    ctx.fillStyle = '#f0f0ee';
-    ctx.font = '9px "DM Mono"';
-    ctx.textAlign = 'center';
-    ctx.fillText(d.label.length > 14 ? d.label.slice(0,13)+'…' : d.label, x, y - meta.data[i].options.radius - 4);
+    ctx.fillStyle='#333'; ctx.font='700 9px "Nunito Sans"'; ctx.textAlign='center';
+    ctx.fillText(d.label.length>15?d.label.slice(0,14)+'…':d.label, x, y-meta.data[i].options.radius-4);
     ctx.restore();
   });
 };
@@ -622,24 +404,17 @@ scatterChart.draw();
 // ---- Table ----
 const maxT = Math.max(...CAMPAIGNS.map(c=>c.t));
 const tbody = document.getElementById('tableBody');
-[...CAMPAIGNS].sort((a,b)=>b.t-a.t).forEach(c => {
-  const kp = Math.round(c.ku/c.t*100);
-  const kcls = kp>=70?'pill-red':kp>=45?'pill-amber':'pill-green';
-  const avgTxt = c.avg!==null ? c.avg.toFixed(2) : '—';
-  const scoreCls = c.avg===null?'':c.avg<=3.2?'pill-green':c.avg<=4.0?'pill-amber':'pill-red';
-  const barW = Math.round(c.t/maxT*100);
-  tbody.innerHTML += `<tr>
-    <td>${c.k}</td>
-    <td>${c.t}</td>
-    <td>${c.avg!==null?`<span class="pill ${scoreCls}">${avgTxt}</span>`:'—'}</td>
+[...CAMPAIGNS].sort((a,b)=>b.t-a.t).forEach(c=>{
+  const kp=Math.round(c.ku/c.t*100);
+  const kcls=kp>=70?'pill-red':kp>=45?'pill-amber':'pill-green';
+  const scoreCls=c.avg===null?'':c.avg<=3.2?'pill-green':c.avg<=4.0?'pill-amber':'pill-red';
+  const bw=Math.round(c.t/maxT*100);
+  tbody.innerHTML+=`<tr>
+    <td>${c.k}</td><td>${c.t}</td>
+    <td>${c.avg!==null?`<span class="pill ${scoreCls}">${c.avg.toFixed(2)}</span>`:'—'}</td>
     <td>${c.ku}</td>
     <td><span class="pill ${kcls}">${kp}%</span></td>
-    <td>
-      <div class="bar-inline">
-        <div class="bar-track"><div class="bar-fill" style="width:${barW}%"></div></div>
-        <span style="font-size:0.7rem;color:var(--muted);min-width:24px">${c.t}</span>
-      </div>
-    </td>
+    <td><div class="bar-inline"><div class="bar-track"><div class="bar-fill" style="width:${bw}%"></div></div><span style="font-size:.7rem;color:var(--muted);min-width:24px">${c.t}</span></div></td>
   </tr>`;
 });
 </script>
